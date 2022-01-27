@@ -1,27 +1,38 @@
 import {
   Backdrop,
-  Button,
   CircularProgress,
   Container,
-  IconButton,
   Paper,
   Table,
   TableBody,
-  TableCell,
   TableContainer,
-  TableHead,
-  TableRow,
 } from "@mui/material";
-import DoneIcon from '@mui/icons-material/Done';
-import CloseIcon from '@mui/icons-material/Close';
 import { Box } from "@mui/system";
-import { Fragment, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
+import { WebSocket } from "ws";
 import Document from "../../models/Document";
 import DocumentRow from "./DocumentRow";
+import DocumentsTableHead from "./DocumentsTableHead";
+
+async function connectToServer() {
+  
+  const ws = new WebSocket('ws://localhost:7071/ws', {
+    
+  });
+  return new Promise((resolve, reject) => {
+      const timer = setInterval(() => {
+          if(ws.readyState === 1) {
+              clearInterval(timer)
+              resolve(ws);
+          }
+      }, 10);
+  });
+}
+
 
 const Documents = () => {
-  const [bulkSelect, setBulkSelect] = useState<boolean>(false)
-  const [loading, setLoading] = useState<boolean>(false)
+  const [bulkSelect, setBulkSelect] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
   const [documents, setDocuments] = useState<Document[]>([
     {
       id: Math.random(),
@@ -39,18 +50,15 @@ const Documents = () => {
       isSigned: false,
       selected: false,
     },
-    {
-      id: Math.random(),
-      title: "Document 3",
-      size: 46,
-      version: 1.2,
-      isSigned: false,
-      selected: false,
-    },
   ]);
-  const toggleBulkSelect = () => {
-    setBulkSelect(prev => !prev)
-  }
+
+  useEffect(() => {
+    //const ws = connectToServer();
+  }, [])
+
+  const toggleBulkSelectHandler = () => {
+    setBulkSelect((prev) => !prev);
+  };
 
   const documentSelectionHandler = (id: number) => {
     setDocuments((prevDocuments) => {
@@ -78,56 +86,52 @@ const Documents = () => {
       });
     });
   };
+  const documentBulkSignHandler = () => {
+    setBulkSelect(false);
+    setDocuments((prevDocuments) => {
+      return prevDocuments.map((document) => {
+        if (document.selected) {
+          return {
+            ...document,
+            selected: false,
+            isSigned: true,
+          };
+        }
+        return document;
+      });
+    });
+  };
 
-  let TableButtons = <Button size="small" onClick={toggleBulkSelect}>Vybrat více</Button>
-  if(bulkSelect) {
-    const confirmButtonActive = !documents.reduce((acc, item) => acc || item.selected, false)
-    TableButtons = (
-      <Fragment>
-        <IconButton onClick={toggleBulkSelect}><CloseIcon /></IconButton>
-        <IconButton disabled={confirmButtonActive}><DoneIcon /></IconButton>
-      </Fragment>
-    )
-  }
+  const confirmButtonActive = !documents.reduce(
+    (acc, item) => acc || item.selected,
+    false
+  );
 
   return (
     <Fragment>
-      <Backdrop
-        sx={{ color: '#fff', zIndex: 2 }}
-        open={loading}
-      >
+      <Backdrop sx={{ color: "#fff", zIndex: 2 }} open={loading}>
         <CircularProgress color="inherit" />
       </Backdrop>
       <Container maxWidth={"lg"}>
         <Box mt={1}>
           <TableContainer component={Paper}>
             <Table sx={{ minWidth: 650 }} aria-label="simple table">
-              <TableHead>
-                <TableRow>
-                  <TableCell>Název</TableCell>
-                  <TableCell width={100} align="right">
-                    Verze
-                  </TableCell>
-                  <TableCell width={100} align="left">
-                    Velikost
-                  </TableCell>
-                  <TableCell width={100} align="right">
-                    {TableButtons}
-                  </TableCell>
-                </TableRow>
-              </TableHead>
+              <DocumentsTableHead
+                isBulkSelect={bulkSelect}
+                confirmButtonActive={confirmButtonActive}
+                onBulkSelectToggle={toggleBulkSelectHandler}
+                onBulkSignConfirm={documentBulkSignHandler}
+              />
               <TableBody>
-                {documents.map((document) => {
-                  return (
-                    <DocumentRow
-                      key={document.id}
-                      document={document}
-                      isBulkSelect={bulkSelect}
-                      onSelect={documentSelectionHandler.bind(null, document.id)}
-                      onSign={documentSignHandler.bind(null, document.id)}
-                    />
-                  );
-                })}
+                {documents.map((document) => (
+                  <DocumentRow
+                    key={document.id}
+                    document={document}
+                    isBulkSelect={bulkSelect}
+                    onSelect={documentSelectionHandler.bind(null, document.id)}
+                    onSign={documentSignHandler.bind(null, document.id)}
+                  />
+                ))}
               </TableBody>
             </Table>
           </TableContainer>
