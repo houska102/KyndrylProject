@@ -9,56 +9,36 @@ import {
 } from "@mui/material";
 import { Box } from "@mui/system";
 import { Fragment, useEffect, useState } from "react";
-import { WebSocket } from "ws";
-import Document from "../../models/Document";
+import Document, { DocumentMetaData } from "../../models/Document";
 import DocumentRow from "./DocumentRow";
 import DocumentsTableHead from "./DocumentsTableHead";
-
-async function connectToServer() {
-  
-  const ws = new WebSocket('ws://localhost:7071/ws', {
-    
-  });
-  return new Promise((resolve, reject) => {
-      const timer = setInterval(() => {
-          if(ws.readyState === 1) {
-              clearInterval(timer)
-              resolve(ws);
-          }
-      }, 10);
-  });
-}
-
+import createClient from "../../middleware/ws-client";
+import { useCallback } from "react";
 
 const Documents = () => {
   const [bulkSelect, setBulkSelect] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
-  const [documents, setDocuments] = useState<Document[]>([
-    {
-      id: Math.random(),
-      title: "Document 1",
-      size: 100,
-      version: 1.0,
-      isSigned: false,
-      selected: false,
-    },
-    {
-      id: Math.random(),
-      title: "Document 2",
-      size: 186,
-      version: 1.1,
-      isSigned: false,
-      selected: false,
-    },
-  ]);
-
-  useEffect(() => {
-    //const ws = connectToServer();
-  }, [])
+  const [documents, setDocuments] = useState<Document[]>([]);
 
   const toggleBulkSelectHandler = () => {
     setBulkSelect((prev) => !prev);
   };
+
+  const initializeDocuments = useCallback((documents: DocumentMetaData[]) => {
+    const transformedDocuments = documents.map((item) => {
+      return {
+        ...item,
+        selected: false,
+      };
+    });
+    setDocuments(transformedDocuments);
+    setLoading(false);
+  }, []);
+
+  useEffect(() => {
+    setLoading(true);
+    createClient(initializeDocuments);
+  }, [initializeDocuments]);
 
   const documentSelectionHandler = (id: number) => {
     setDocuments((prevDocuments) => {

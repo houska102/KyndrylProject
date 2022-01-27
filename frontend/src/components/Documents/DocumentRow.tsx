@@ -1,19 +1,12 @@
 import {
-  Button,
   Checkbox,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
   IconButton,
   TableCell,
   TableRow,
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
-import TaskIcon from '@mui/icons-material/Task';
+import TaskIcon from "@mui/icons-material/Task";
 import Document from "../../models/Document";
-import { Fragment, useState } from "react";
 import ConfirmationDialog from "../UI/ConfirmationDialog";
 
 const DocumentRow: React.FC<{
@@ -23,11 +16,15 @@ const DocumentRow: React.FC<{
   onSign: () => void;
 }> = (props) => {
   const signingConfirmationHandler = () => {
-    props.onSign()
-  } 
+    props.onSign();
+  };
 
   let actionsContent = !props.isBulkSelect ? (
-    <ConfirmationDialog title="Opravdu Chcete Podepsat Dokument?" description={props.document.title} onConfirm={signingConfirmationHandler}>
+    <ConfirmationDialog
+      title="Opravdu Chcete Podepsat Dokument?"
+      description={props.document.title}
+      onConfirm={signingConfirmationHandler}
+    >
       <IconButton>
         <EditIcon />
       </IconButton>
@@ -36,9 +33,7 @@ const DocumentRow: React.FC<{
     <Checkbox checked={props.document.selected} onChange={props.onSelect} />
   );
   if (props.document.isSigned) {
-    actionsContent = (
-      <TaskIcon color="success" sx={{marginRight: '10px'}} />
-    );
+    actionsContent = <TaskIcon color="success" sx={{ marginRight: "10px" }} />;
   }
 
   return (

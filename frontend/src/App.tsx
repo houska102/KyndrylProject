@@ -1,6 +1,6 @@
-import { Fragment } from 'react';
-import Documents from './components/Documents/Documents';
-import Header from './components/Layout/Header';
+import { Fragment } from "react";
+import Documents from "./components/Documents/Documents";
+import Header from "./components/Layout/Header";
 
 const App = () => {
   return (
@@ -9,6 +9,6 @@ const App = () => {
       <Documents />
     </Fragment>
   );
-}
+};
 
 export default App;

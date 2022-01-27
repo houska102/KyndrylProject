@@ -1,37 +1,69 @@
-const WebSocket = require('ws');
-const wss = new WebSocket.Server({ port: 7071 });
+var WebSocketServer = require('websocket').server;
+var http = require('http');
 
-const clients = new Map();
-
-wss.on('connection', (ws) => {
-  const id = uuidv4();
-  const color = Math.floor(Math.random() * 360);
-  const metadata = { id, color };
-  console.log('new client', metadata)
-
-  clients.set(ws, metadata);
-
-  ws.on('message', (messageAsString) => {
-    const message = JSON.parse(messageAsString);
-    const metadata = clients.get(ws);
-
-    message.sender = metadata.id;
-    message.color = metadata.color;
-    const outbound = JSON.stringify(message);
-
-    [...clients.keys()].forEach((client) => {
-      client.send(outbound);
-    });
-  });
-  ws.on("close", () => {
-    clients.delete(ws);
-  });
+var server = http.createServer(function(request, response) {
+    console.log((new Date()) + ' Received request for ' + request.url);
+    response.writeHead(404);
+    response.end();
+});
+server.listen(8080, function() {
+    console.log((new Date()) + ' Server is listening on port 8080');
 });
 
-function uuidv4() {
-  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
-    var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
-    return v.toString(16);
-  });
+wsServer = new WebSocketServer({
+    httpServer: server,
+    // You should not use autoAcceptConnections for production
+    // applications, as it defeats all standard cross-origin protection
+    // facilities built into the protocol and the browser.  You should
+    // *always* verify the connection's origin and decide whether or not
+    // to accept it.
+    autoAcceptConnections: false
+});
+
+function originIsAllowed(origin) {
+  // put logic here to detect whether the specified origin is allowed.
+  return true;
 }
-console.log("wss up");
+
+const dummy_docs = [
+  {
+    id: Math.random(),
+    title: "Document 1",
+    size: 100,
+    version: 1.0,
+    isSigned: false,
+  },
+  {
+    id: Math.random(),
+    title: "Document 2",
+    size: 186,
+    version: 1.1,
+    isSigned: false,
+  },
+]
+
+wsServer.on('request', function(request) {
+    if (!originIsAllowed(request.origin)) {
+      // Make sure we only accept requests from an allowed origin
+      request.reject();
+      console.log((new Date()) + ' Connection from origin ' + request.origin + ' rejected.');
+      return;
+    }
+    
+    var connection = request.accept('echo-protocol', request.origin);
+    console.log((new Date()) + ' Connection accepted.');
+    connection.sendUTF(JSON.stringify({type: 'initial', payload: dummy_docs}))
+    connection.on('message', function(message) {
+        if (message.type === 'utf8') {
+            console.log('Received Message: ' + message.utf8Data);
+            connection.sendUTF(message.utf8Data);
+        }
+        else if (message.type === 'binary') {
+            console.log('Received Binary Message of ' + message.binaryData.length + ' bytes');
+            connection.sendBytes(message.binaryData);
+        }
+    });
+    connection.on('close', function(reasonCode, description) {
+        console.log((new Date()) + ' Peer ' + connection.remoteAddress + ' disconnected.');
+    });
+});

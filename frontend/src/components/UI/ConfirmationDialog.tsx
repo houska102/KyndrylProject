@@ -1,7 +1,18 @@
-import { Fragment, useState } from "react";
-import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from "@mui/material"
+import React, { Fragment, useState } from "react";
+import {
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+} from "@mui/material";
 
-const ConfirmationDialog:React.FC<{title: string, description: string, onConfirm: () => void}> = (props) => {
+const ConfirmationDialog: React.FC<{
+  title: string;
+  description: string;
+  onConfirm: () => void;
+}> = (props) => {
   const [dialogOpen, setDialogOpen] = useState<boolean>(false);
 
   const openDialogHandler = () => {
@@ -11,9 +22,9 @@ const ConfirmationDialog:React.FC<{title: string, description: string, onConfirm
     setDialogOpen(false);
   };
   const confirmDialogHandler = () => {
-    props.onConfirm()
+    props.onConfirm();
     setDialogOpen(false);
-  }
+  };
 
   return (
     <Fragment>
@@ -21,9 +32,7 @@ const ConfirmationDialog:React.FC<{title: string, description: string, onConfirm
       <Dialog open={dialogOpen} onClose={closeDialogHandler}>
         <DialogTitle>{props.title}</DialogTitle>
         <DialogContent>
-          <DialogContentText>
-            {props.description}
-          </DialogContentText>
+          <DialogContentText>{props.description}</DialogContentText>
         </DialogContent>
         <DialogActions>
           <Button onClick={closeDialogHandler}>Zrušit</Button>
@@ -31,7 +40,7 @@ const ConfirmationDialog:React.FC<{title: string, description: string, onConfirm
         </DialogActions>
       </Dialog>
     </Fragment>
-  )
-}
+  );
+};
 
-export default ConfirmationDialog
+export default ConfirmationDialog;

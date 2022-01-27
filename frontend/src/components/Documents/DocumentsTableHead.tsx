@@ -26,7 +26,10 @@ const DocumentsTableHead: React.FC<{
         <IconButton onClick={props.onBulkSelectToggle}>
           <CloseIcon />
         </IconButton>
-        <IconButton disabled={props.confirmButtonActive} onClick={props.onBulkSignConfirm}>
+        <IconButton
+          disabled={props.confirmButtonActive}
+          onClick={props.onBulkSignConfirm}
+        >
           <DoneIcon />
         </IconButton>
       </Fragment>
