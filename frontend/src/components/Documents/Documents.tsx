@@ -1,5 +1,4 @@
 import {
-  Backdrop,
   CircularProgress,
   Container,
   Paper,
@@ -14,6 +13,8 @@ import DocumentRow from "./DocumentRow";
 import DocumentsTableHead from "./DocumentsTableHead";
 import createClient from "../../middleware/ws-client";
 import { useCallback } from "react";
+
+const signingUri = "http://localhost:4040/sign-document";
 
 const Documents = () => {
   const [bulkSelect, setBulkSelect] = useState<boolean>(false);
@@ -34,11 +35,25 @@ const Documents = () => {
     setDocuments(transformedDocuments);
     setLoading(false);
   }, []);
+  const documentSignHandler = useCallback((id: number) => {
+    setDocuments((prevDocuments) => {
+      return prevDocuments.map((document) => {
+        console.log(document)
+        if (document.id === id) {
+          return {
+            ...document,
+            isSigned: true,
+          };
+        }
+        return document;
+      });
+    });
+  }, []);
 
   useEffect(() => {
     setLoading(true);
-    createClient(initializeDocuments);
-  }, [initializeDocuments]);
+    createClient(initializeDocuments, documentSignHandler)
+  }, [initializeDocuments, documentSignHandler]);
 
   const documentSelectionHandler = (id: number) => {
     setDocuments((prevDocuments) => {
@@ -53,20 +68,11 @@ const Documents = () => {
       });
     });
   };
-  const documentSignHandler = (id: number) => {
-    setDocuments((prevDocuments) => {
-      return prevDocuments.map((document) => {
-        if (document.id === id) {
-          return {
-            ...document,
-            isSigned: true,
-          };
-        }
-        return document;
-      });
-    });
+  const requestSignatureHandler = () => {
+    window.open(signingUri, "_blank");
   };
-  const documentBulkSignHandler = () => {
+
+  const requestBulkSignatureHandler = () => {
     setBulkSelect(false);
     setDocuments((prevDocuments) => {
       return prevDocuments.map((document) => {
@@ -74,47 +80,65 @@ const Documents = () => {
           return {
             ...document,
             selected: false,
-            isSigned: true,
           };
         }
         return document;
       });
     });
+    window.open(signingUri, "_blank");
   };
 
-  const confirmButtonActive = !documents.reduce(
+  const confirmBulkSignButtonActive = !documents.reduce(
     (acc, item) => acc || item.selected,
     false
   );
+  const allDocumentsSigned = !documents.reduce(
+    (acc, item) => acc && item.isSigned,
+    true
+  );
+
+  const documentsContent = (
+    <TableContainer component={Paper}>
+      <Table sx={{ minWidth: 650 }} aria-label="simple table">
+        <DocumentsTableHead
+          isBulkSelect={bulkSelect}
+          confirmButtonActive={confirmBulkSignButtonActive}
+          onBulkSelectToggle={toggleBulkSelectHandler}
+          onBulkSignConfirm={requestBulkSignatureHandler}
+        />
+        <TableBody>
+          {documents.map((document) => (
+            <DocumentRow
+              key={document.id}
+              document={document}
+              isBulkSelect={bulkSelect}
+              onSelect={documentSelectionHandler.bind(null, document.id)}
+              onSign={requestSignatureHandler}
+            />
+          ))}
+        </TableBody>
+      </Table>
+    </TableContainer>
+  );
+
+  const content = allDocumentsSigned ? (
+    documentsContent
+  ) : (
+    <Paper sx={{ padding: "10px", textAlign: "center" }}>
+      Dokumentace byla úspěšně podepsána
+    </Paper>
+  )
 
   return (
     <Fragment>
-      <Backdrop sx={{ color: "#fff", zIndex: 2 }} open={loading}>
-        <CircularProgress color="inherit" />
-      </Backdrop>
       <Container maxWidth={"lg"}>
         <Box mt={1}>
-          <TableContainer component={Paper}>
-            <Table sx={{ minWidth: 650 }} aria-label="simple table">
-              <DocumentsTableHead
-                isBulkSelect={bulkSelect}
-                confirmButtonActive={confirmButtonActive}
-                onBulkSelectToggle={toggleBulkSelectHandler}
-                onBulkSignConfirm={documentBulkSignHandler}
-              />
-              <TableBody>
-                {documents.map((document) => (
-                  <DocumentRow
-                    key={document.id}
-                    document={document}
-                    isBulkSelect={bulkSelect}
-                    onSelect={documentSelectionHandler.bind(null, document.id)}
-                    onSign={documentSignHandler.bind(null, document.id)}
-                  />
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
+          {loading && (
+            <Paper sx={{ padding: "10px", textAlign: "center" }}>
+              <CircularProgress color="inherit" />
+            </Paper>
+          )}
+          {!loading && content}
         </Box>
       </Container>
     </Fragment>

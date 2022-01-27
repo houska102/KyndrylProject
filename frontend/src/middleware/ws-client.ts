@@ -1,11 +1,14 @@
 import { DocumentMetaData } from "../models/Document";
 
-const W3CWebSocket = require("websocket").w3cwebsocket;
+const W3CWebSocket = require('websocket').w3cwebsocket;
+
+
 
 const createClient = (
-  initializeDocuments: (documents: DocumentMetaData[]) => void
+  initializeDocuments: (documents: DocumentMetaData[]) => void,
+  signDocument: (id: number) => void
 ) => {
-  const client = new W3CWebSocket("ws://localhost:8080/", "echo-protocol");
+  const client = new W3CWebSocket("ws://localhost:8080/", "document-signature");
 
   client.onerror = function () {
     console.log("Connection Error");
@@ -16,18 +19,21 @@ const createClient = (
   };
 
   client.onclose = function () {
-    console.log("echo-protocol Client Closed");
+    console.log("document-signature Client Closed");
   };
 
   client.onmessage = (e: { data: string }) => {
     if (typeof e.data === "string") {
       console.log("Received: '" + e.data + "'");
       const message = JSON.parse(e.data)
-      if(message.type === 'initial')
+      if(message.type === 'initial'){
         initializeDocuments(message.payload)
+      } else if (message.type === 'document-signature') {
+        signDocument(+message.payload)
+      }
     }
   };
   return client;
-};
+}
 
 export default createClient;

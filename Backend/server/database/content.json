@@ -1,0 +1,26 @@
+{
+    "1": {
+        "title": "Document 1",
+        "size": 100,
+        "version": 1,
+        "isSigned": false
+    },
+    "2": {
+        "title": "Document 2",
+        "size": 186,
+        "version": 1.1,
+        "isSigned": false
+    },
+    "3": {
+        "title": "Document 3",
+        "size": 186,
+        "version": 1.1,
+        "isSigned": false
+    },
+    "4": {
+        "title": "Document 4",
+        "size": 186,
+        "version": 1.1,
+        "isSigned": false
+    }
+}
