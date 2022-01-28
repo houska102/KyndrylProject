@@ -28,7 +28,6 @@ const removeClient = (clientId) => {
     );
   }
 };
-
 const broadcastSignature = (documentId) => {
   console.log(`${new Date().toISOString()} Messaging clients`);
   clients.forEach((client) => {
