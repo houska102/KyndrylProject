@@ -6,7 +6,7 @@ const initializeExpressApp = (databaseClient, broadcastSignature) => {
     const documentId = `${req.params.documentId}`;
     try{
       if(!databaseClient.has(documentId))
-        throw new Error("404-document id not found")
+        throw new Error("document id not found")
       console.log(`${new Date().toISOString()} Signing document id ${documentId}`);
       const savedDocument = databaseClient.get(documentId);
       const newDocument = {
@@ -20,7 +20,7 @@ const initializeExpressApp = (databaseClient, broadcastSignature) => {
       res.send(JSON.stringify(newDocument));
       console.log(`${new Date().toISOString()} Document id ${documentId} signed`);
     } catch(error){
-      res.status(500);
+      res.status(404);
       res.send(error.message);
     }
   });
