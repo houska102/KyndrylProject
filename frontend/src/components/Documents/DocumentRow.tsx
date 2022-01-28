@@ -33,7 +33,7 @@ const DocumentRow: React.FC<{
     <Checkbox checked={props.document.selected} onChange={props.onSelect} />
   );
   if (props.document.isSigned) {
-    actionsContent = <TaskIcon color="success" sx={{ marginRight: "10px" }} />;
+    actionsContent = <TaskIcon color="success" sx={{ marginRight: "4px", paddingTop: '5px', fontSize: "30px" }} />;
   }
 
   return (

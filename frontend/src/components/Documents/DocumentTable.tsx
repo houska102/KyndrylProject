@@ -1,6 +1,5 @@
 import { Paper, Table, TableBody, TableContainer } from "@mui/material";
 import { useContext, useState } from "react";
-import Document from "../../models/Document";
 import { DocumentContext } from "../../store/document-context";
 import DocumentRow from "./DocumentRow";
 import DocumentsTableHead from "./DocumentsTableHead";
