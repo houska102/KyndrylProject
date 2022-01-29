@@ -22,13 +22,13 @@ const ConfirmationDialog: React.FC<{
     setDialogOpen(false);
   };
   const confirmDialogHandler = () => {
-    props.onConfirm();
     setDialogOpen(false);
+    props.onConfirm();
   };
 
   return (
     <Fragment>
-      <span onClick={openDialogHandler}>{props.children}</span>
+      <span role="button" onClick={openDialogHandler}>{props.children}</span>
       <Dialog open={dialogOpen} onClose={closeDialogHandler}>
         <DialogTitle>{props.title}</DialogTitle>
         <DialogContent>
