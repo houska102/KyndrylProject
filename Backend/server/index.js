@@ -13,28 +13,35 @@ server.listen(8080, (request, response) => {
 });
 const databaseClient = new JSONdb("./database/content.json");
 
-let clients = [];
+let websocketClients = [];
+
 const registerClient = (connection) => {
-  const connectionId = Date.now();
-  clients.push({ id: connectionId, connection: connection });
-  return connectionId;
+  const clientId = Date.now();
+  websocketClients.push({ id: clientId, connection: connection });
+  return clientId;
 };
 const removeClient = (clientId) => {
-  if (connectionId) {
-    clients = clients.filter((client) => client.id !== clientId);
+  if (clientId) {
+    websocketClients = websocketClients.filter((client) => client.id !== clientId);
   } else {
     console.error(
       `${new Date().toISOString()} No client id provided when removing client from client list`
     );
   }
 };
+
 const broadcastSignature = (documentId) => {
-  console.log(`${new Date().toISOString()} Messaging clients`);
-  clients.forEach((client) => {
-    client.connection.sendUTF(
-      JSON.stringify({ type: "document-signature", payload: documentId })
-    );
-  });
+  try{
+    console.log(`${new Date().toISOString()} Messaging clients`);
+    websocketClients.forEach((client) => {
+      client.connection.sendUTF(
+        JSON.stringify({ type: "document-signature", payload: documentId })
+      );
+    });
+  } catch(error) {
+    console.log(`${new Date().toISOString()} Error occurred when Messaging clients`);
+    console.log(`${error.message}`);
+  }
 };
 
 initializeWebsocket(server, databaseClient, registerClient, removeClient);

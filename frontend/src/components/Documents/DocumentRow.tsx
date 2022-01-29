@@ -40,7 +40,7 @@ const DocumentRow: React.FC<{
     <TableRow>
       <TableCell>{props.document.title}</TableCell>
       <TableCell align="right">{props.document.version}</TableCell>
-      <TableCell align="left">{props.document.size}MB</TableCell>
+      <TableCell align="left">{props.document.size} MB</TableCell>
       <TableCell align="right">{actionsContent}</TableCell>
     </TableRow>
   );

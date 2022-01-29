@@ -1,26 +1,26 @@
 {
     "1": {
         "title": "Document 1",
-        "size": 100,
+        "size": 1.5,
         "version": 1,
         "isSigned": false
     },
     "2": {
         "title": "Document 2",
-        "size": 186,
-        "version": 1.1,
+        "size": 3.4,
+        "version": 3,
         "isSigned": false
     },
     "3": {
         "title": "Document 3",
-        "size": 186,
-        "version": 1.1,
+        "size": 2.6,
+        "version": 2,
         "isSigned": false
     },
     "4": {
         "title": "Document 4",
-        "size": 186,
-        "version": 1.1,
+        "size": 6.8,
+        "version": 5,
         "isSigned": false
     }
 }

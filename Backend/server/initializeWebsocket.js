@@ -28,7 +28,7 @@ const initializeWebsocket = (server, databaseClient, registerClient, removeClien
       );
       return;
     }
-  
+    try {
     const connection = request.accept("document-signature", request.origin);
     const connectionId = registerClient(connection)
     console.log(new Date().toISOString() + " Connection accepted.");
@@ -48,6 +48,12 @@ const initializeWebsocket = (server, databaseClient, registerClient, removeClien
         new Date().toISOString() + " Peer " + connection.remoteAddress + " disconnected."
       );
     });
+    } catch(error) {
+      console.log(`${new Date().toISOString()} Error occurred when connecting client`);
+      console.log(`${error.message}`);
+      request.reject();
+      return
+    }
   });
 
   return wsServer
