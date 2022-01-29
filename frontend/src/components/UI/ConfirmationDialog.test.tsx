@@ -3,6 +3,7 @@ import ConfirmationDialog from "./ConfirmationDialog";
 
 describe('ConfirmationDialog component', () => {
     const onConfirmMock = jest.fn()
+    const dialogFadeOutDuration = 200
     beforeEach(() => {
         render((
             <ConfirmationDialog title="Confirmation dialog" description="Action Description" onConfirm={onConfirmMock}>
@@ -42,16 +43,22 @@ describe('ConfirmationDialog component', () => {
         fireEvent.click(screen.getByText('Potvrdit'))
         expect(onConfirmMock).toBeCalled()
     })
-    it('closes the dialog when the confirm(potvrdit) button is clicked', () => {
+    it('closes the dialog when the confirm(potvrdit) button is clicked', done => {
         fireEvent.click(screen.getByText('Dialog Button'))
         fireEvent.click(screen.getByText('Potvrdit'))
-        expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+        setTimeout(() => {
+            expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+            done()
+        }, dialogFadeOutDuration)
     })
-    it('closes the dialog when the cancel(Zrušit) button is clicked', () => {
+    it('closes the dialog when the cancel(Zrušit) button is clicked', done => {
         fireEvent.click(screen.getByText('Dialog Button'))
         expect(screen.getByText('Zrušit'))
         fireEvent.click(screen.getByText('Zrušit'))
-        expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+        setTimeout(() => {
+            expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+            done()
+        }, dialogFadeOutDuration)
     })
 
 
