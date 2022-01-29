@@ -10,7 +10,7 @@ const DocumentsTable = () => {
   const documentContext = useContext(DocumentContext)
   const [bulkSelect, setBulkSelect] = useState<boolean>(false);
 
-  const confirmBulkSignButtonActive = !documentContext.documents.reduce(
+  const confirmBulkSignButtonDisabled = !documentContext.documents.reduce(
     (acc, item) => acc || item.selected,
     false
   );
@@ -32,7 +32,7 @@ const DocumentsTable = () => {
       <Table sx={{ minWidth: 650 }} aria-label="simple table">
         <DocumentsTableHead
           isBulkSelect={bulkSelect}
-          confirmButtonActive={confirmBulkSignButtonActive}
+          confirmButtonDisabled={confirmBulkSignButtonDisabled}
           onBulkSelectToggle={toggleBulkSelectHandler}
           onBulkSignConfirm={requestBulkSignatureHandler}
         />

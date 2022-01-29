@@ -11,7 +11,7 @@ import { Fragment } from "react";
 
 const DocumentsTableHead: React.FC<{
   isBulkSelect: boolean;
-  confirmButtonActive: boolean;
+  confirmButtonDisabled: boolean;
   onBulkSelectToggle: () => void;
   onBulkSignConfirm: () => void;
 }> = (props) => {
@@ -27,7 +27,7 @@ const DocumentsTableHead: React.FC<{
           <CloseIcon />
         </IconButton>
         <IconButton
-          disabled={props.confirmButtonActive}
+          disabled={props.confirmButtonDisabled}
           onClick={props.onBulkSignConfirm}
         >
           <DoneIcon />
