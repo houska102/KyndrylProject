@@ -7,7 +7,7 @@ import DocumentsTableHead from "./DocumentsTableHead";
 const signingUri = process.env.REACT_APP_DOCUMENT_SIGN_REDIRECT;
 
 const DocumentsTable = () => {
-  const documentContext = useContext(DocumentContext)
+  const documentContext = useContext(DocumentContext);
   const [bulkSelect, setBulkSelect] = useState<boolean>(false);
 
   const confirmBulkSignButtonDisabled = !documentContext.documents.reduce(
@@ -22,7 +22,7 @@ const DocumentsTable = () => {
     setBulkSelect(false);
     documentContext.unselectAllDocuments();
     window.open(signingUri, "_blank");
-  }
+  };
   const requestSignatureHandler = () => {
     window.open(signingUri, "_blank");
   };
@@ -42,7 +42,10 @@ const DocumentsTable = () => {
               key={document.id}
               document={document}
               isBulkSelect={bulkSelect}
-              onSelect={documentContext.toggleDocumentSelection.bind(null, document.id)}
+              onSelect={documentContext.toggleDocumentSelection.bind(
+                null,
+                document.id
+              )}
               onSign={requestSignatureHandler}
             />
           ))}

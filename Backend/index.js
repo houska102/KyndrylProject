@@ -22,7 +22,9 @@ const registerClient = (connection) => {
 };
 const removeClient = (clientId) => {
   if (clientId) {
-    websocketClients = websocketClients.filter((client) => client.id !== clientId);
+    websocketClients = websocketClients.filter(
+      (client) => client.id !== clientId
+    );
   } else {
     console.error(
       `${new Date().toISOString()} No client id provided when removing client from client list`
@@ -31,15 +33,17 @@ const removeClient = (clientId) => {
 };
 
 const broadcastSignature = (documentId) => {
-  try{
+  try {
     console.log(`${new Date().toISOString()} Messaging clients`);
     websocketClients.forEach((client) => {
       client.connection.sendUTF(
         JSON.stringify({ type: "document-signature", payload: documentId })
       );
     });
-  } catch(error) {
-    console.log(`${new Date().toISOString()} Error occurred when Messaging clients`);
+  } catch (error) {
+    console.log(
+      `${new Date().toISOString()} Error occurred when Messaging clients`
+    );
     console.log(`${error.message}`);
   }
 };

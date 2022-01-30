@@ -1,13 +1,14 @@
 import React, { useCallback, useEffect, useState } from "react";
 import createClient from "../middleware/ws-client";
 import Document, { DocumentMetaData } from "../models/Document";
+import documentUtils from "./document-utils";
 
 type contextType = {
   documents: Document[];
   loading: boolean;
-  allDocumentsSigned: boolean,
+  allDocumentsSigned: boolean;
   unselectAllDocuments: () => void;
-  toggleDocumentSelection: (id: number) => void
+  toggleDocumentSelection: (id: number) => void;
 };
 
 export const DocumentContext = React.createContext<contextType>({
@@ -15,7 +16,7 @@ export const DocumentContext = React.createContext<contextType>({
   loading: false,
   allDocumentsSigned: false,
   unselectAllDocuments: () => {},
-  toggleDocumentSelection: () => {}
+  toggleDocumentSelection: () => {},
 });
 
 const DocumentContextProvider: React.FC = (props) => {
@@ -23,12 +24,7 @@ const DocumentContextProvider: React.FC = (props) => {
   const [documents, setDocuments] = useState<Document[]>([]);
 
   const initializeDocuments = useCallback((documents: DocumentMetaData[]) => {
-    const transformedDocuments = documents.map((item) => {
-      return {
-        ...item,
-        selected: false,
-      };
-    });
+    const transformedDocuments = documentUtils.transformDocuments(documents);
     setDocuments(transformedDocuments);
     setLoading(false);
   }, []);
@@ -50,7 +46,6 @@ const DocumentContextProvider: React.FC = (props) => {
     setLoading(true);
     createClient(initializeDocuments, documentSignHandler);
   }, [initializeDocuments, documentSignHandler]);
-
 
   const toggleDocumentSelect = (id: number) => {
     setDocuments((prevDocuments) => {
@@ -82,8 +77,8 @@ const DocumentContextProvider: React.FC = (props) => {
     loading: loading,
     allDocumentsSigned: allDocumentsSigned,
     unselectAllDocuments: unselectAllDocuments,
-    toggleDocumentSelection: toggleDocumentSelect
-  }
+    toggleDocumentSelection: toggleDocumentSelect,
+  };
 
   return (
     <DocumentContext.Provider value={contextValue}>

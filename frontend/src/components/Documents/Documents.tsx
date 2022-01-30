@@ -11,7 +11,7 @@ import DocumentsTable from "./DocumentTable";
 import { DocumentContext } from "../../store/document-context";
 
 const Documents = () => {
-  const documentContext = useContext(DocumentContext)
+  const documentContext = useContext(DocumentContext);
 
   return (
     <Fragment>
@@ -25,9 +25,11 @@ const Documents = () => {
           {!documentContext.loading && (
             <Fragment>
               <Collapse in={documentContext.allDocumentsSigned}>
-                <Alert severity="success">Dokumentace byla úspěšně podepsána</Alert>
+                <Alert severity="success">
+                  Dokumentace byla úspěšně podepsána
+                </Alert>
               </Collapse>
-              <DocumentsTable/>
+              <DocumentsTable />
             </Fragment>
           )}
         </Box>
