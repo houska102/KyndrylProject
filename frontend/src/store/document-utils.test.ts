@@ -1,4 +1,3 @@
-import { FamilyRestroomTwoTone } from "@mui/icons-material";
 import documentUtils from "./document-utils";
 
 describe("documentUtils transformDocuments", () => {
